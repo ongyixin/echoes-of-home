@@ -4,13 +4,30 @@
 
 A voice-first assistant that turns personal photos, videos, and social media into conversational audio experiences — built for accessibility. Powered by Vapi, Gemini Vision, and Cartesia sonic-3.
 
-<img width="2706" height="1502" alt="image" src="https://github.com/user-attachments/assets/b037c851-38fc-4c0d-952f-e5734edc86ee" />
+---
 
-<img width="2700" height="1494" alt="CleanShot 2026-03-25 at 20 39 31@2x" src="https://github.com/user-attachments/assets/9a648d45-d39b-4858-9451-c37dfd0d8e16" />
+## Pictures
 
-<img width="2706" height="1492" alt="CleanShot 2026-03-25 at 20 39 50@2x" src="https://github.com/user-attachments/assets/53d4cd04-135d-4516-b580-9c50e5a13a9c" />
+<img width="3024" height="1722" alt="CleanShot 2026-03-25 at 23 35 21@2x" src="https://github.com/user-attachments/assets/cd2fe0c7-6b2c-48ba-93f8-20262958a161" />
 
-<img width="2702" height="1500" alt="CleanShot 2026-03-25 at 20 40 20@2x" src="https://github.com/user-attachments/assets/ec92bef3-ea63-4e42-b493-57ce6735e2f3" />
+<img width="3024" height="1722" alt="CleanShot 2026-03-25 at 23 36 05@2x" src="https://github.com/user-attachments/assets/a5ea5875-a442-4401-bac4-6f76c73b83ba" />
+
+<img width="3022" height="1722" alt="CleanShot 2026-03-25 at 23 36 24@2x" src="https://github.com/user-attachments/assets/9a94d37c-76f1-4f0f-ba13-beb091859fe0" />
+
+<img width="3024" height="1722" alt="CleanShot 2026-03-25 at 23 37 38@2x" src="https://github.com/user-attachments/assets/223521c2-d6fe-47e8-920f-0ddb99e51b5a" />
+
+### Live
+
+<img width="3024" height="1722" alt="CleanShot 2026-03-25 at 23 37 55@2x" src="https://github.com/user-attachments/assets/262e7173-f025-4aa9-b4d7-ea1458b2e807" />
+
+<img width="3018" height="1718" alt="CleanShot 2026-03-25 at 23 38 15@2x" src="https://github.com/user-attachments/assets/a8080b1e-8d58-4418-aa3f-75f04184c4d4" />
+
+### Connect
+
+<img width="3018" height="1718" alt="CleanShot 2026-03-25 at 23 38 15@2x" src="https://github.com/user-attachments/assets/b207b3ea-38a6-4692-8ba4-98d903b8739f" />
+
+<img width="1330" height="1234" alt="CleanShot 2026-03-25 at 23 38 56@2x" src="https://github.com/user-attachments/assets/4b402246-91c1-4cbb-bcb5-8d50f35a1f7f" />
+
 
 ---
 
