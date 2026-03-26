@@ -1,36 +1,149 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Echoes of Home
+
+> *Turn cherished moments into stories you can hear.*
+
+A voice-first assistant that turns family photos and videos into conversational audio experiences for visually impaired users. Built with Vapi, Cartesia sonic-3, and GPT-4o Vision.
+
+---
+
+## Features
+
+- **Upload a photo or short video** — drag and drop, or browse files
+- **3 audio styles** — Warm Recap, Mini Podcast, or Audio Diary
+- **Live voice conversation** — ask follow-up questions like "Who's in the photo?" or "What's happening here?"
+- **Grounded answers** — all responses are based on GPT-4o Vision analysis of your media
+- **Expressive speech** — Cartesia sonic-3 with emotion-matched voice presets
+- **Accessible by design** — WCAG 2.1 AA, screen reader friendly, keyboard navigable
+
+---
 
 ## Getting Started
 
-First, run the development server:
+### 1. Clone and install
+
+```bash
+git clone <your-repo-url>
+cd voice-agent-hackathon
+npm install
+```
+
+### 2. Set up environment variables
+
+```bash
+cp .env.example .env.local
+```
+
+Edit `.env.local` and fill in:
+
+| Variable | Where to get it |
+|---|---|
+| `NEXT_PUBLIC_VAPI_PUBLIC_KEY` | [Vapi Dashboard](https://dashboard.vapi.ai) → Settings → API Keys |
+| `VAPI_PRIVATE_KEY` | Vapi Dashboard → Settings → API Keys |
+| `OPENAI_API_KEY` | [OpenAI Platform](https://platform.openai.com/api-keys) |
+| `CARTESIA_API_KEY` | [Cartesia](https://play.cartesia.ai) → API Keys (optional) |
+| `NEXT_PUBLIC_APP_URL` | `http://localhost:3000` for local dev |
+
+### 3. Run the development server
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+---
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Architecture
 
-## Learn More
+```
+Browser                     Next.js API Routes           External
+────────────────────────    ─────────────────────────    ────────────────────
+UploadCard           POST → /api/upload                  (file system)
+                     POST → /api/analyze           →     GPT-4o Vision
 
-To learn more about Next.js, take a look at the following resources:
+StylePicker
+  ↓
+SessionPage          POST → /api/session           →     builds Vapi config
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Vapi Web SDK  ←──────────────────────────────────────── Vapi Cloud
+                     POST → /api/vapi/tools        →     GPT-4o (Q&A)
+                             ↑
+                     Vapi calls this webhook for tool calls
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+### Key architectural decisions
 
-## Deploy on Vercel
+- **Cartesia via Vapi built-in**: Cartesia is Vapi's default TTS provider. We configure it directly in the assistant config — no custom TTS endpoint needed.
+- **Inline assistant config**: The backend builds a per-session assistant config (system prompt with media context baked in, voice preset, tools) returned to the frontend, which calls `vapi.start(config)`.
+- **Server-side tools**: All tools are webhook-backed. Vapi calls `POST /api/vapi/tools` with tool-call payloads.
+- **In-memory store**: Media analysis results are stored in a `Map<string, MediaContext>`. Sufficient for hackathon MVP.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+---
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Voice Agent Tools
+
+The Vapi assistant can call these tools:
+
+| Tool | Description |
+|---|---|
+| `get_media_summary` | Returns a styled summary of the analyzed media |
+| `answer_media_question` | Answers a specific question grounded in the visual analysis |
+| `list_audio_styles` | Lists available audio styles |
+
+---
+
+## Audio Styles & Voice Presets
+
+| Style | Name | Cartesia Voice | Emotion | Speed |
+|---|---|---|---|---|
+| Audio Diary | Kira | `57dcab65…` | neutral | 1.0× |
+| Warm Recap | Maya | `a0e99841…` | content, grateful | 0.95× |
+| Mini Podcast | Jace | `ae7ec6a5…` | excited, enthusiastic | 1.05× |
+
+---
+
+## Demo Mode
+
+The app works without API keys in demo mode:
+
+- Navigate to `/session/demo?style=warm` to see the full conversation UI
+- Sample prompts are pre-wired with mock responses
+- Upload and analysis flows fall back gracefully
+
+---
+
+## Tech Stack
+
+| Layer | Technology |
+|---|---|
+| Framework | Next.js 14 (App Router, TypeScript) |
+| Styling | Tailwind CSS v4 + custom design tokens |
+| Voice agent | Vapi Web SDK + Vapi Cloud |
+| TTS | Cartesia sonic-3 (via Vapi built-in provider) |
+| Media analysis | GPT-4o Vision (OpenAI) |
+| Fonts | Playfair Display + Inter |
+
+---
+
+## Hackathon Demo Script
+
+1. Open the app — hero page loads with warm, pastel aesthetic
+2. Click "Try a Demo" — navigates to `/session/demo?style=warm`
+3. The audio player shows with a simulated transcript
+4. Click "Tap to speak" — voice session starts
+5. Ask: *"Who's in the photo?"* → assistant answers from visual analysis
+6. Ask: *"Turn this into a short podcast intro"* → style-matched response
+7. Switch to "Mini Podcast" style — voice and tone change
+8. Return to homepage → Memory Feed shows sample memories
+
+---
+
+## Deployment
+
+Deploy to Vercel:
+
+```bash
+vercel deploy
+```
+
+Set all environment variables in Vercel dashboard. Update `NEXT_PUBLIC_APP_URL` to your production URL so Vapi can reach the tool webhook endpoints.

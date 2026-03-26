@@ -1,26 +1,159 @@
 @import "tailwindcss";
-
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+@import "@fontsource/playfair-display/400.css";
+@import "@fontsource/playfair-display/600.css";
+@import "@fontsource/inter/400.css";
+@import "@fontsource/inter/500.css";
+@import "@fontsource/inter/600.css";
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  /* ── Echoes of Home palette ── */
+  --color-blush:        #f9d5d3;
+  --color-blush-deep:   #f0b8b5;
+  --color-peach:        #fddbb4;
+  --color-peach-deep:   #f7c48a;
+  --color-buttercream:  #fef7e4;
+  --color-cream:        #fdf8f0;
+  --color-lavender:     #e8dff5;
+  --color-lavender-deep:#cfc0eb;
+  --color-dusty-rose:   #d4a5a5;
+  --color-sky:          #d4e8f0;
+  --color-cocoa:        #7a5c4e;
+  --color-cocoa-light:  #a07060;
+  --color-warm-gray:    #8c7b74;
+  --color-warm-gray-light: #c4b4ae;
+
+  /* ── Semantic tokens ── */
+  --color-background:   var(--color-cream);
+  --color-surface:      #ffffff;
+  --color-surface-warm: #fef9f5;
+  --color-text-primary: #4a3728;
+  --color-text-secondary: var(--color-cocoa);
+  --color-text-muted:   var(--color-warm-gray);
+  --color-accent:       #e8927c;
+  --color-accent-soft:  #f2b5a0;
+
+  /* ── Fonts ── */
+  --font-serif: "Playfair Display", Georgia, serif;
+  --font-sans: "Inter", system-ui, sans-serif;
+
+  /* ── Radius ── */
+  --radius-sm:  0.5rem;
+  --radius-md:  1rem;
+  --radius-lg:  1.5rem;
+  --radius-xl:  2rem;
+  --radius-full: 9999px;
+
+  /* ── Shadows ── */
+  --shadow-warm: 0 4px 24px rgba(122, 92, 78, 0.10);
+  --shadow-card: 0 2px 16px rgba(122, 92, 78, 0.08);
+  --shadow-glow: 0 0 24px rgba(232, 146, 124, 0.35);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+/* ── Base ── */
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background-color: #fdf8f0;
+  color: #4a3728;
+  font-family: "Inter", system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ── Scrollbar ── */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #fef7e4;
+}
+::-webkit-scrollbar-thumb {
+  background: #d4a5a5;
+  border-radius: 999px;
+}
+
+/* ── Focus ring ── */
+:focus-visible {
+  outline: 2px solid #e8927c;
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+/* ── Animations ── */
+@keyframes breathe {
+  0%, 100% { transform: scale(1);   opacity: 1;    }
+  50%       { transform: scale(1.04); opacity: 0.9; }
+}
+
+@keyframes glow-pulse {
+  0%, 100% { box-shadow: 0 0 16px rgba(232, 146, 124, 0.3); }
+  50%       { box-shadow: 0 0 32px rgba(232, 146, 124, 0.6); }
+}
+
+@keyframes waveform {
+  0%   { transform: scaleY(0.3); }
+  50%  { transform: scaleY(1);   }
+  100% { transform: scaleY(0.3); }
+}
+
+@keyframes fade-up {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0);    }
+}
+
+@keyframes fade-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px);  }
+  50%       { transform: translateY(-6px); }
+}
+
+.animate-breathe        { animation: breathe 3s ease-in-out infinite; }
+.animate-glow-pulse     { animation: glow-pulse 2s ease-in-out infinite; }
+.animate-fade-up        { animation: fade-up 0.5s ease-out both; }
+.animate-fade-in        { animation: fade-in 0.4s ease-out both; }
+.animate-float          { animation: float 4s ease-in-out infinite; }
+
+/* ── Waveform bars ── */
+.waveform-bar {
+  animation: waveform 1.2s ease-in-out infinite;
+}
+.waveform-bar:nth-child(2)  { animation-delay: 0.1s; }
+.waveform-bar:nth-child(3)  { animation-delay: 0.2s; }
+.waveform-bar:nth-child(4)  { animation-delay: 0.3s; }
+.waveform-bar:nth-child(5)  { animation-delay: 0.4s; }
+.waveform-bar:nth-child(6)  { animation-delay: 0.2s; }
+.waveform-bar:nth-child(7)  { animation-delay: 0.35s; }
+.waveform-bar:nth-child(8)  { animation-delay: 0.15s; }
+.waveform-bar:nth-child(9)  { animation-delay: 0.45s; }
+.waveform-bar:nth-child(10) { animation-delay: 0.05s; }
+.waveform-bar:nth-child(11) { animation-delay: 0.25s; }
+.waveform-bar:nth-child(12) { animation-delay: 0.38s; }
+
+/* ── Utility helpers ── */
+.font-serif  { font-family: "Playfair Display", Georgia, serif; }
+.text-balance { text-wrap: balance; }
+
+.card-surface {
+  background: white;
+  border-radius: 1.25rem;
+  box-shadow: 0 2px 16px rgba(122, 92, 78, 0.08);
+  border: 1px solid rgba(212, 165, 165, 0.2);
+}
+
+.gradient-warm {
+  background: linear-gradient(135deg, #fddbb4 0%, #f9d5d3 50%, #e8dff5 100%);
+}
+
+.gradient-hero {
+  background: linear-gradient(160deg, #fef7e4 0%, #fddbb4 35%, #f9d5d3 70%, #e8dff5 100%);
 }
