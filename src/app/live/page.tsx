@@ -29,48 +29,77 @@ export default function LivePage() {
   const [launchHint, setLaunchHint] = useState<string | null>(null);
   const lastDescriptionRef = useRef<string | undefined>(undefined);
   const currentAudioRef = useRef<HTMLAudioElement | null>(null);
-  const currentAudioBlobRef = useRef<string | null>(null);
+  const currentBlobUrlRef = useRef<string | null>(null);
+  const isSpeakingRef = useRef(false);
+  // Holds at most one pending description — always the most recent one.
+  // Older pending descriptions are discarded so the voice never falls behind the scroll.
+  const pendingTextRef = useRef<string | null>(null);
+
+  const playText = useCallback(async (text: string) => {
+    if (!text) return;
+    isSpeakingRef.current = true;
+
+    try {
+      const res = await fetch("/api/tts", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        // "factual" = Katie, Cartesia's recommended stable voice for accessibility
+        body: JSON.stringify({ text, style: "factual" }),
+      });
+      if (!res.ok) throw new Error("TTS failed");
+
+      const blob = await res.blob();
+      const url = URL.createObjectURL(blob);
+      currentBlobUrlRef.current = url;
+
+      const audio = new Audio(url);
+      currentAudioRef.current = audio;
+
+      audio.onended = () => {
+        URL.revokeObjectURL(url);
+        currentBlobUrlRef.current = null;
+        currentAudioRef.current = null;
+        isSpeakingRef.current = false;
+
+        // Play the next pending description if one arrived while we were speaking
+        const next = pendingTextRef.current;
+        if (next) {
+          pendingTextRef.current = null;
+          playText(next);
+        }
+      };
+
+      audio.onerror = () => {
+        currentAudioRef.current = null;
+        isSpeakingRef.current = false;
+        const next = pendingTextRef.current;
+        if (next) {
+          pendingTextRef.current = null;
+          playText(next);
+        }
+      };
+
+      audio.play().catch(() => {
+        isSpeakingRef.current = false;
+      });
+    } catch {
+      isSpeakingRef.current = false;
+    }
+  }, []);
 
   const speak = useCallback(
-    async (text: string) => {
+    (text: string) => {
       if (!voiceEnabled) return;
 
-      // Stop and discard any currently playing audio
-      if (currentAudioRef.current) {
-        currentAudioRef.current.pause();
-        currentAudioRef.current = null;
-      }
-      if (currentAudioBlobRef.current) {
-        URL.revokeObjectURL(currentAudioBlobRef.current);
-        currentAudioBlobRef.current = null;
-      }
-
-      try {
-        const res = await fetch("/api/tts", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          // "factual" = Katie, Cartesia's recommended stable voice for accessibility
-          body: JSON.stringify({ text, style: "factual" }),
-        });
-        if (!res.ok) return;
-
-        const blob = await res.blob();
-        const url = URL.createObjectURL(blob);
-        currentAudioBlobRef.current = url;
-
-        const audio = new Audio(url);
-        currentAudioRef.current = audio;
-        audio.onended = () => {
-          URL.revokeObjectURL(url);
-          currentAudioBlobRef.current = null;
-          currentAudioRef.current = null;
-        };
-        audio.play().catch(() => {});
-      } catch {
-        // silently ignore TTS errors during live narration
+      if (isSpeakingRef.current) {
+        // Already speaking — park this as the next-up description, replacing any older pending one
+        pendingTextRef.current = text;
+      } else {
+        pendingTextRef.current = null;
+        playText(text);
       }
     },
-    [voiceEnabled],
+    [voiceEnabled, playText],
   );
 
   const handleFrame = useCallback(
@@ -127,13 +156,17 @@ export default function LivePage() {
 
   const handleStopCapture = useCallback(() => {
     setIsCapturing(false);
+    pendingTextRef.current = null;
+    isSpeakingRef.current = false;
     if (currentAudioRef.current) {
+      currentAudioRef.current.onended = null;
+      currentAudioRef.current.onerror = null;
       currentAudioRef.current.pause();
       currentAudioRef.current = null;
     }
-    if (currentAudioBlobRef.current) {
-      URL.revokeObjectURL(currentAudioBlobRef.current);
-      currentAudioBlobRef.current = null;
+    if (currentBlobUrlRef.current) {
+      URL.revokeObjectURL(currentBlobUrlRef.current);
+      currentBlobUrlRef.current = null;
     }
   }, []);
 
