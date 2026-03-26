@@ -4,6 +4,14 @@
 
 A voice-first assistant that turns personal photos, videos, and social media into conversational audio experiences — built for accessibility. Powered by Vapi, Gemini Vision, and Cartesia sonic-3.
 
+<img width="2706" height="1502" alt="image" src="https://github.com/user-attachments/assets/b037c851-38fc-4c0d-952f-e5734edc86ee" />
+
+<img width="2700" height="1494" alt="CleanShot 2026-03-25 at 20 39 31@2x" src="https://github.com/user-attachments/assets/9a648d45-d39b-4858-9451-c37dfd0d8e16" />
+
+<img width="2706" height="1492" alt="CleanShot 2026-03-25 at 20 39 50@2x" src="https://github.com/user-attachments/assets/53d4cd04-135d-4516-b580-9c50e5a13a9c" />
+
+<img width="2702" height="1500" alt="CleanShot 2026-03-25 at 20 40 20@2x" src="https://github.com/user-attachments/assets/ec92bef3-ea63-4e42-b493-57ce6735e2f3" />
+
 ---
 
 ## Features
